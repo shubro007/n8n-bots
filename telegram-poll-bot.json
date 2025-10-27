@@ -1,0 +1,227 @@
+{
+  "name": "telegram-poll-bot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -512,
+        -144
+      ],
+      "id": "2ca11169-8547-453e-89d6-56ff1b104d22",
+      "name": "Telegram Trigger",
+      "webhookId": "ebd70d40-b5a4-43b4-8c12-6d9d1857edeb",
+      "credentials": {
+        "telegramApi": {
+          "id": "GG0peX2MQtninGto",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=create a simple question with 4 options on the topic {{ $json.message.text }} , \"Your entire response MUST be a single, valid JSON object. Do not include any surrounding text, markdown formatting (like triple backticks or the word 'json'), or explanations outside the curly braces.\"\n\n{\n\"chat_id\": {{ $json.message.chat.id }},\n\"question\" : \"example question?\",\n\"options\" : [\n\"option 1\", \n\"option 2\", \n\"option 3\", \n\"option 4\"\n],\n\"type\" : \"quiz\",\n\"correct_option_id\" : 0,\n\"explanation\" : \"text\"\n}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        -64,
+        -144
+      ],
+      "id": "6c0cf52b-7085-4543-abc7-3b248aab4cae",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        96
+      ],
+      "id": "c399efd0-fef8-4484-b005-b3c4b9deaa8b",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DMWZVDGKSoilvCUL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "354021c6-dce1-444a-860c-6230bda3ea6b",
+              "name": "message.chat.id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "7f778745-8730-401f-8ba5-83da2d895010",
+              "name": "message.text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -272,
+        -144
+      ],
+      "id": "c350cb33-9951-465f-aad5-147218491c14",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.telegram.org/bot8397397534:AAHf8oub2BHo5e-_dfdPO3kaiPXomyj09wk/sendPoll",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "chat_id",
+              "value": "={{ $json.chat_id }}"
+            },
+            {
+              "name": "question",
+              "value": "={{ $json.question }}"
+            },
+            {
+              "name": "type"
+            },
+            {
+              "name": "options",
+              "value": "={{ $json.options }}"
+            },
+            {
+              "name": "correct_option_id",
+              "value": "={{ $json.correct_option_id }}"
+            },
+            {
+              "name": "explanation",
+              "value": "={{ $json.explanation }}"
+            },
+            {
+              "name": "type",
+              "value": "={{ $json.type }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        544,
+        -144
+      ],
+      "id": "4d874e88-78f2-4874-8deb-bd6b90a9bfa3",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ $json.output }}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        304,
+        -144
+      ],
+      "id": "099ad0ba-36b1-4644-ba14-76da047745b2",
+      "name": "Edit Fields1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        []
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8fcc7a72-e197-4501-95e1-e6157bca0277",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6d366d299780433db3d1aec3421b33d4663faa101d96c1824fa4fc30edad43bd"
+  },
+  "id": "5V96ZOzeZR6q4c8t",
+  "tags": []
+}
