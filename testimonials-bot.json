@@ -1,0 +1,177 @@
+{
+  "name": "testimonials-bot",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1JyFaCyRKSh3G3NKjRWuCmPTxeTpk7REVdk-ZZ-jFbhc",
+          "mode": "list",
+          "cachedResultName": "product responses",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JyFaCyRKSh3G3NKjRWuCmPTxeTpk7REVdk-ZZ-jFbhc/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 844728507,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1JyFaCyRKSh3G3NKjRWuCmPTxeTpk7REVdk-ZZ-jFbhc/edit#gid=844728507"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -544,
+        -48
+      ],
+      "id": "6443118d-2288-4580-8f62-df109bcdb6e0",
+      "name": "Google Sheets Trigger",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "eeSjPXy2gFyAKWlp",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.0-flash-exp-image-generation",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.0-flash-exp-image-generation"
+        },
+        "prompt": "=create an image of testimonial of the review - \n {{ $json.review }} with rating of {{ $json.rating }} ",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        -48
+      ],
+      "id": "8a128f29-251c-48ec-ad68-7e9c1096276e",
+      "name": "Generate an image",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DMWZVDGKSoilvCUL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "5414837162",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        128,
+        -32
+      ],
+      "id": "80e2fe10-4508-4a69-83eb-df73e283dd2a",
+      "name": "Send a photo message",
+      "webhookId": "60478e12-5ace-4108-8eff-ededd96b8d93",
+      "credentials": {
+        "telegramApi": {
+          "id": "ou8xSqrwj6q8Jl1s",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9fc05b1a-f2c3-4757-84ad-d26f17d9ffc8",
+              "name": "review",
+              "value": "={{ $json['describe your experience with the product'] }}",
+              "type": "string"
+            },
+            {
+              "id": "fa4b4d59-0f99-401a-a9ba-e7407a44b38f",
+              "name": "rating",
+              "value": "={{ $json['rate it out of 5 stars'] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        -48
+      ],
+      "id": "de09d814-6687-45a4-bc9b-5c39533bf5c7",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Generate an image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate an image": {
+      "main": [
+        [
+          {
+            "node": "Send a photo message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a photo message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8fb61f44-f877-480e-9055-2ea09026b33b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6d366d299780433db3d1aec3421b33d4663faa101d96c1824fa4fc30edad43bd"
+  },
+  "id": "gSbwQaf74ulMBcgC",
+  "tags": []
+}
