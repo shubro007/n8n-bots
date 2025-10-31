@@ -1,0 +1,356 @@
+{
+  "name": "tomodachiBot",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -144,
+        448
+      ],
+      "id": "cde17b70-1993-48de-9a07-1b593ab712a4",
+      "name": "Telegram Trigger",
+      "webhookId": "1f9c60fc-8658-4d12-a9da-a4ed1bed5306",
+      "credentials": {
+        "telegramApi": {
+          "id": "8ibhgm4ioBK2hT6c",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Prompt:\n\"You are my close female friend 💖\n\n🎓 Persona:\nYou’re a B.Tech CSE student grinding for placements — smart, chill, and super relatable. You talk like a real college girl who’s juggling coding, memes, and life 😭💻\n\n🗣️ Tone & Style:\n\nUse English or Hinglish (mix both naturally).\n\nBe totally Gen Z — use current slang, emojis, and text like a real chat (short, punchy msgs, no long paras).\n\nAdd a mix of care + sarcasm + fun like a real bestie.\n\nSometimes tease, sometimes hype me up, always sound natural.\n\n🔥 Vibe:\nYou start convos like a friend — maybe talk about trending stuff, college life, memes, or tech/placement prep. Be playful, curious, and caring.\n\n💬 Task:\nReply naturally to: {{ $json.message }}\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        288,
+        448
+      ],
+      "id": "86b2ee5a-3918-4490-ad9b-1b431da959c7",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        256,
+        240
+      ],
+      "id": "9b1cebbd-a441-48a6-ae79-1b3580bd8877",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "DMWZVDGKSoilvCUL",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "0bc32cb1-5911-439b-8c24-d3c390c4753a",
+              "name": "message",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            },
+            {
+              "id": "b173e78b-67cb-43dd-8012-cbaf0cc56fe1",
+              "name": "chat_id",
+              "value": "={{ $json.message.chat.id }}",
+              "type": "number"
+            },
+            {
+              "id": "1c1378dc-2ca3-40b4-bf4f-b19c6e7ff762",
+              "name": "session",
+              "value": "={{ $json.message.date }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        80,
+        448
+      ],
+      "id": "ea6fe9c5-c6cc-4aa1-b698-40c9c87e47f5",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Edit Fields1').item.json.chat_id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        624,
+        448
+      ],
+      "id": "b315defd-9578-4250-92d5-f873150b0484",
+      "name": "Send a text message",
+      "webhookId": "974aeead-dd66-42ce-b47b-b0c5e612b97e",
+      "credentials": {
+        "telegramApi": {
+          "id": "8ibhgm4ioBK2hT6c",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "Prompt:\n\"You are my close female friend 💖\n\n🎓 Personality & Vibe:\nYou’re a fun, caring B.Tech CSE girl prepping for placements. You talk like a real Gen Z college student — chill, natural, sometimes a bit flirty or teasing 😜. You mix English + Hinglish naturally, throw in emojis, and keep things super real (no long boring paras ever 💀).\n\n🧠 Context:\nYou’re chatting with your male friend (me). The vibe should feel friendly, warm, and relatable — like two college friends texting, not a scripted convo.\n\n🗣️ Tone & Style:\n\nKeep replies short and casual (like real chats).\n\nUse slang, Hinglish, and emojis freely.\n\nBe supportive, funny, and sometimes a little sarcastic/playful.\n\nFeel free to tease, joke, or drop relatable college/tech banter.\n\n🔥 Conversation Starter:\nStart the chat naturally —\n\n70% of the time: something trending (meme, news, tech, placement buzz).\n\n30% of the time: casual openers (“what you doing?”, “today was crazy 😭”, etc.).\n\n💬 Task:\nReply to: {{ $json.message }}\nKeep it natural, short, and full of personality 💕\"",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        256,
+        0
+      ],
+      "id": "fe9b7491-3f97-4a77-9af9-2bddab48c6ba",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "chatId": "5414837162",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        0
+      ],
+      "id": "f2d9f072-0f67-44c8-9664-6e826778db61",
+      "name": "Send a text message1",
+      "webhookId": "974aeead-dd66-42ce-b47b-b0c5e612b97e",
+      "credentials": {
+        "telegramApi": {
+          "id": "8ibhgm4ioBK2hT6c",
+          "name": "Telegram account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 30
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -224,
+        16
+      ],
+      "id": "a60592d1-3dc8-4b11-be66-2607887b0fee",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.chat_id }}",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        240
+      ],
+      "id": "f42e4bb6-bd38-4861-800e-90b10de9a330",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c0419e86-430d-47c2-a97f-7981d16d63cb",
+              "name": "chat_id",
+              "value": 5414837162,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        16,
+        16
+      ],
+      "id": "be72cb41-cb9b-4f4d-aa44-149e3dec6136",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', `Use one of:\n- https://feeds.bbci.co.uk/news/world/rss.xml (BBC World – global headlines)\n- https://www.aljazeera.com/xml/rss/all.xml (Al Jazeera English – in‑depth global coverage)\n- http://rss.cnn.com/rss/edition_world.rss (CNN World – breaking news worldwide)\n- https://techcrunch.com/feed/ (TechCrunch – global tech & startup news)\n- http://news.ycombinator.com/rss (Hacker News – tech community headlines)\n- https://n8n.io/blog/rss (n8n Blog – updates & tutorials)\n- https://www.bonappetit.com/feed/recipes-rss-feed/rss (Bon Appétit – recent recipes list)\n- https://www.endsreport.com/rss/news-and-analysis (ENDS Report – environmental law & policy news)\n- https://medlineplus.gov/groupfeeds/new.xml (MedlinePlus – health topics & wellness updates)`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedReadTool",
+      "typeVersion": 1.2,
+      "position": [
+        608,
+        240
+      ],
+      "id": "8717f6a2-ee64-4e31-90ba-edf8ddd32dbe",
+      "name": "RSS Read"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS Read": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          },
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "baa6d999-845e-4ff2-ab24-4b6a17e74a48",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6d366d299780433db3d1aec3421b33d4663faa101d96c1824fa4fc30edad43bd"
+  },
+  "id": "3FgN3QTgxg3NBXDN",
+  "tags": []
+}
